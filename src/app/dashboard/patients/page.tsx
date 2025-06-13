@@ -1,0 +1,107 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+interface Patient {
+  id: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  gender: string
+  phoneNumber?: string
+}
+
+export default function PatientsPage() {
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [patients, setPatients] = useState<Patient[]>([])
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    // TODO: Implement patient search
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-semibold text-gray-900">Patients</h1>
+            <button
+              onClick={() => router.push('/dashboard/patients/new')}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+            >
+              Add New Patient
+            </button>
+          </div>
+
+          {/* Search Form */}
+          <form onSubmit={handleSearch} className="mb-6">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search patients..."
+                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              />
+              <button
+                type="submit"
+                className="bg-white text-indigo-600 border border-indigo-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-50"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+
+          {/* Patients Table */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul className="divide-y divide-gray-200">
+              {patients.length === 0 ? (
+                <li className="px-6 py-4 text-center text-gray-500">
+                  No patients found. Add a new patient to get started.
+                </li>
+              ) : (
+                patients.map((patient) => (
+                  <li key={patient.id}>
+                    <div className="px-6 py-4 hover:bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {patient.firstName} {patient.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              DOB: {new Date(patient.dateOfBirth).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <button
+                            onClick={() => router.push(`/dashboard/patients/${patient.id}`)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => router.push(`/dashboard/reports/new?patientId=${patient.id}`)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            New Report
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+} 

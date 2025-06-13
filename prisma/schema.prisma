@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'han@6578279';"
+// user: posetgres, pw: han@6578279
+//   sudo -u postgres createdb martclinic
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          Role      @default(DOCTOR)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  reports       Report[]
+}
+
+model Patient {
+  id            String    @id @default(cuid())
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  gender        Gender
+  phoneNumber   String?
+  email         String?
+  address       String?
+  medicalHistory String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  reports       Report[]
+}
+
+model Report {
+  id            String    @id @default(cuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        User      @relation(fields: [doctorId], references: [id])
+  examinationDate DateTime
+  findings      String
+  impression    String
+  recommendations String?
+  images        String[]  // URLs to stored ultrasound images
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  NURSE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+} 
