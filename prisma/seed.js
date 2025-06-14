@@ -1,15 +1,30 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
+const bcrypt = require('bcrypt');
 const faker = require('faker');
 
 async function main() {
-  // Create users
+  // Create users with hashed passwords
   const users = await prisma.user.createMany({
     data: [
-      { name: 'Dr. John Doe', email: 'doctor@example.com', password: 'password', role: 'DOCTOR' },
-      { name: 'Nurse Jane Smith', email: 'nurse@example.com', password: 'password', role: 'NURSE' },
-      { name: 'Admin Bob Brown', email: 'admin@example.com', password: 'password', role: 'ADMIN' },
+      { 
+        name: 'Dr. John Doe', 
+        email: 'doctor@example.com', 
+        password: await bcrypt.hash('password', 10), 
+        role: 'DOCTOR' 
+      },
+      { 
+        name: 'Nurse Jane Smith', 
+        email: 'nurse@example.com', 
+        password: await bcrypt.hash('password', 10), 
+        role: 'NURSE' 
+      },
+      { 
+        name: 'Admin Bob Brown', 
+        email: 'admin@example.com', 
+        password: await bcrypt.hash('password', 10), 
+        role: 'ADMIN' 
+      },
     ],
     skipDuplicates: true,
   });
