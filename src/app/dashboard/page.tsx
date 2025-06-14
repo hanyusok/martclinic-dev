@@ -1,12 +1,17 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function DashboardPage() {
   const { data: session } = useSession()
   const router = useRouter()
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false })
+    router.push('/')
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -41,7 +46,7 @@ export default function DashboardPage() {
             <div className="flex items-center">
               <span className="text-gray-700 mr-4">Welcome, {session?.user?.name}</span>
               <button
-                onClick={() => router.push('/api/auth/signout')}
+                onClick={handleSignOut}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
               >
                 Sign out

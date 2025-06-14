@@ -49,12 +49,20 @@ export default function ReportsPage() {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-gray-900">Reports</h1>
-            <Link
-              href="/dashboard/reports/new"
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
-            >
-              New Report
-            </Link>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => router.push('/dashboard/patients')}
+                className="bg-white text-gray-700 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+              >
+                Back to Patients
+              </button>
+              <Link
+                href="/dashboard/reports/new"
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+              >
+                New Report
+              </Link>
+            </div>
           </div>
 
           {/* Reports List */}

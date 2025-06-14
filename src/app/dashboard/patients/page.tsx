@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -19,10 +19,32 @@ export default function PatientsPage() {
   const { data: session } = useSession()
   const [searchTerm, setSearchTerm] = useState('')
   const [patients, setPatients] = useState<Patient[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchPatients()
+  }, [])
+
+  const fetchPatients = async (search?: string) => {
+    try {
+      setIsLoading(true)
+      const url = search ? `/api/patients?search=${encodeURIComponent(search)}` : '/api/patients'
+      const response = await fetch(url)
+      if (!response.ok) throw new Error('Failed to fetch patients')
+      const data = await response.json()
+      setPatients(data)
+    } catch (err) {
+      setError('Failed to load patients')
+      console.error('Error fetching patients:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement patient search
+    await fetchPatients(searchTerm)
   }
 
   return (
@@ -60,13 +82,17 @@ export default function PatientsPage() {
 
           {/* Patients Table */}
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {patients.length === 0 ? (
-                <li className="px-6 py-4 text-center text-gray-500">
-                  No patients found. Add a new patient to get started.
-                </li>
-              ) : (
-                patients.map((patient) => (
+            {isLoading ? (
+              <div className="px-6 py-4 text-center text-gray-500">Loading patients...</div>
+            ) : error ? (
+              <div className="px-6 py-4 text-center text-red-500">{error}</div>
+            ) : patients.length === 0 ? (
+              <div className="px-6 py-4 text-center text-gray-500">
+                No patients found. Add a new patient to get started.
+              </div>
+            ) : (
+              <ul className="divide-y divide-gray-200">
+                {patients.map((patient) => (
                   <li key={patient.id}>
                     <div className="px-6 py-4 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
@@ -97,9 +123,9 @@ export default function PatientsPage() {
                       </div>
                     </div>
                   </li>
-                ))
-              )}
-            </ul>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
