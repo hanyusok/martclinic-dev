@@ -2,25 +2,11 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import Link from 'next/link'
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const router = useRouter()
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    }
-  }, [status, router])
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -32,24 +18,24 @@ export default function DashboardPage() {
                 <h1 className="text-xl font-bold text-indigo-600">Ultrasound Report System</h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <a
+                <Link
                   href="/dashboard"
                   className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Dashboard
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/dashboard/patients"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Patients
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/dashboard/reports"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Reports
-                </a>
+                </Link>
               </div>
             </div>
             <div className="flex items-center">
@@ -104,12 +90,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Statistics</h3>
                 <div className="mt-5">
-                  <dl className="grid grid-cols-1 gap-5">
-                    <div className="px-4 py-5 bg-gray-50 shadow rounded-lg overflow-hidden sm:p-6">
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Reports</dt>
-                      <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
-                    </div>
-                  </dl>
+                  <p className="text-gray-500">No statistics available</p>
                 </div>
               </div>
             </div>

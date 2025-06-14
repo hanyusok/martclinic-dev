@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 interface Patient {
   id: string
@@ -30,12 +31,12 @@ export default function PatientsPage() {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-gray-900">Patients</h1>
-            <button
-              onClick={() => router.push('/dashboard/patients/new')}
+            <Link
+              href="/dashboard/patients/new"
               className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
             >
               Add New Patient
-            </button>
+            </Link>
           </div>
 
           {/* Search Form */}
@@ -80,18 +81,18 @@ export default function PatientsPage() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <button
-                            onClick={() => router.push(`/dashboard/patients/${patient.id}`)}
+                          <Link
+                            href={`/dashboard/patients/${patient.id}`}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
                             View
-                          </button>
-                          <button
-                            onClick={() => router.push(`/dashboard/reports/new?patientId=${patient.id}`)}
+                          </Link>
+                          <Link
+                            href={`/dashboard/reports/new?patientId=${patient.id}`}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
                             New Report
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
