@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 
 const UPLOAD_DIR = join(process.cwd(), 'public', 'uploads')
 
