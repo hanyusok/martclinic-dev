@@ -1,66 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ultrasound Report System
+
+This is a [Next.js](https://nextjs.org) project for managing ultrasound reports in outpatient clinics.
+
+## Features
+
+- User authentication with role-based access (Admin, Doctor, Nurse)
+- Patient management system
+- Ultrasound report creation and management
+- Image upload and storage
+- Report printing functionality
+- Search and filter capabilities
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React, TailwindCSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: NextAuth.js
+- **Styling**: TailwindCSS
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js (v18 or higher)
+- PostgreSQL
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd martclinic-dev
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following variables:
+```env
+DATABASE_URL="postgresql://postgres:your_password@localhost:5432/martclinic"
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+4. Set up the database:
+```bash
+# Create the database
+sudo -u postgres createdb martclinic
+
+# Run database migrations
+npx prisma migrate dev
+
+# Seed the database with initial data
+node prisma/seed.js
+```
+
+5. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The database includes the following main tables:
 
-## Learn More
+- **User**: Contains user information with roles (ADMIN, DOCTOR, NURSE)
+- **Patient**: Contains patient information including personal and medical history
+- **Report**: Contains medical reports linked to patients and doctors
 
-To learn more about Next.js, take a look at the following resources:
+## Seed Data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The database comes pre-populated with the following seed data:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 3 users with different roles:
+  - Doctor (email: doctor@example.com, password: password)
+  - Nurse (email: nurse@example.com, password: password)
+  - Admin (email: admin@example.com, password: password)
+- 5 sample patients with random data
+- 20 sample reports linked to the patients
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## PostgreSQL Database
-
-This project uses PostgreSQL as its database. The database is set up with the following tables:
-
-- **User:** Contains user information with roles (ADMIN, DOCTOR, NURSE).
-- **Patient:** Contains patient information including personal and medical history.
-- **Report:** Contains medical reports linked to patients and doctors.
-
-### Database Setup
-
-1. Ensure PostgreSQL is installed and running on your system.
-2. Create a database named `martclinic`.
-3. Configure your `.env` file with the following:
-   ```
-   DATABASE_URL="postgresql://postgres:your_password@localhost:5432/martclinic"
-   ```
-4. Run the Prisma migrations to set up the database schema:
-   ```bash
-   npx prisma migrate dev
-   ```
-
-### Seed Data
-
-The database can be populated with sample data using the seed script:
+To reset the database with seed data:
 ```bash
+npx prisma migrate reset
 node prisma/seed.js
 ```
 
-This will create 3 users, 5 patients, and 20 reports in the database.
+## Development
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Deployment
+
+The application can be deployed on Vercel or any other platform that supports Next.js applications.
+
+1. Build the application:
+```bash
+npm run build
+```
+
+2. Start the production server:
+```bash
+npm run start
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
