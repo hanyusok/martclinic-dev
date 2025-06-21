@@ -18,6 +18,7 @@ model User {
   email         String    @unique
   password      String
   role          Role      @default(DOCTOR)
+  licenseNumber String?   // 의사 면허번호
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reports       Report[]
@@ -33,6 +34,7 @@ model Patient {
   email         String?
   address       String?
   medicalHistory String?
+  patientNumber String?   // 환자 등록번호
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reports       Report[]
@@ -44,10 +46,30 @@ model Report {
   patient       Patient   @relation(fields: [patientId], references: [id])
   doctorId      String
   doctor        User      @relation(fields: [doctorId], references: [id])
+  
+  // Medical Institution Information
+  institutionName String?   // 의료기관명칭
+  institutionAddress String? // 의료기관 주소
+  institutionPhone String?   // 전화번호
+  
+  // Examination Information
+  examinationType ExaminationType @default(GENERAL) // 검사명 (일반/정밀/제한적)
   examinationDate DateTime
-  findings      String
-  impression    String
+  interpretationDate DateTime? // 판독일시
+  
+  // Organ Findings
+  liverEcho String?        // 간실질의 에코
+  liverMass String?        // 간종괴 유무 및 세부내용
+  gallbladderAbnormal String? // 담낭 이상 여부 및 세부내용
+  bileDuctDilation String? // 담관 확장 여부 및 세부내용
+  spleenEnlargement String? // 비장 종대 여부 및 세부내용
+  pancreasAbnormal String? // 췌장 이상 여부 및 세부내용
+  
+  // Legacy fields (keeping for backward compatibility)
+  findings      String?
+  impression    String?
   recommendations String?
+  
   images        String[]  // URLs to stored ultrasound images
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -63,4 +85,10 @@ enum Gender {
   MALE
   FEMALE
   OTHER
+}
+
+enum ExaminationType {
+  GENERAL    // 일반
+  DETAILED   // 정밀
+  LIMITED    // 제한적
 } 
