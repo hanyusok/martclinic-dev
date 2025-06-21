@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Patient } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 
 const prisma = new PrismaClient()
@@ -15,8 +15,7 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     const {
-      firstName,
-      lastName,
+      fullName,
       dateOfBirth,
       gender,
       phoneNumber,
@@ -26,14 +25,13 @@ export async function POST(request: Request) {
     } = body
 
     // Validate required fields
-    if (!firstName || !lastName || !dateOfBirth || !gender) {
+    if (!fullName || !dateOfBirth || !gender) {
       return new NextResponse('Missing required fields', { status: 400 })
     }
 
     const patient = await prisma.patient.create({
       data: {
-        firstName,
-        lastName,
+        fullName,
         dateOfBirth: new Date(dateOfBirth),
         gender,
         phoneNumber,
@@ -65,8 +63,7 @@ export async function GET(request: Request) {
       where: search
         ? {
             OR: [
-              { firstName: { contains: search, mode: 'insensitive' } },
-              { lastName: { contains: search, mode: 'insensitive' } },
+              { fullName: { contains: search, mode: 'insensitive' } },
               { email: { contains: search, mode: 'insensitive' } },
             ],
           }

@@ -46,8 +46,7 @@ export async function PUT(
 
     const body = await request.json()
     const {
-      firstName,
-      lastName,
+      fullName,
       dateOfBirth,
       gender,
       phoneNumber,
@@ -61,8 +60,7 @@ export async function PUT(
         id: params.id,
       },
       data: {
-        firstName,
-        lastName,
+        fullName,
         dateOfBirth: new Date(dateOfBirth),
         gender,
         phoneNumber,

@@ -7,11 +7,11 @@ async function main() {
   // Create 3 doctors
   const doctorData = [
     {
-      name: 'Dr. Kim Minsoo',
-      email: 'kim.minsoo@example.com',
-      password: await bcrypt.hash('password1', 10),
+      name: 'Dr. Han YuSok',
+      email: 'hanyusok@gmail.com',
+      password: await bcrypt.hash('123456', 10),
       role: 'DOCTOR',
-      licenseNumber: faker.datatype.number({ min: 100000, max: 999999 }).toString(),
+      licenseNumber: '63221',
     },
     {
       name: 'Dr. Lee Jihye',
@@ -34,10 +34,11 @@ async function main() {
   // Create 10 patients
   const patients = [];
   for (let i = 0; i < 10; i++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
     const patient = await prisma.patient.create({
       data: {
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
+        fullName: firstName + ' ' + lastName,
         dateOfBirth: faker.date.past(60, new Date(2010, 0, 1)),
         gender: faker.random.arrayElement(['MALE', 'FEMALE', 'OTHER']),
         phoneNumber: faker.phone.phoneNumber(),

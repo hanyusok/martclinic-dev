@@ -9,8 +9,7 @@ interface Report {
   id: string
   patient: {
     id: string
-    firstName: string
-    lastName: string
+    fullName: string
     dateOfBirth: string
     gender: string
     patientNumber?: string
@@ -215,7 +214,7 @@ export default function ReportDetailPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">성명</p>
-                <p className="text-sm font-medium text-gray-900">{report.patient.firstName} {report.patient.lastName}</p>
+                <p className="text-sm font-medium text-gray-900">{report.patient.fullName}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">생년월일</p>

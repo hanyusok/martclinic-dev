@@ -17,8 +17,7 @@ export default function NewPatientPage() {
 
     const formData = new FormData(e.currentTarget)
     const patientData = {
-      firstName: formData.get('firstName'),
-      lastName: formData.get('lastName'),
+      fullName: formData.get('fullName'),
       dateOfBirth: formData.get('dateOfBirth'),
       gender: formData.get('gender'),
       phoneNumber: formData.get('phoneNumber'),
@@ -67,27 +66,14 @@ export default function NewPatientPage() {
               )}
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                    First Name
+                <div className="sm:col-span-2">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                    Full Name
                   </label>
                   <input
                     type="text"
-                    name="firstName"
-                    id="firstName"
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
+                    name="fullName"
+                    id="fullName"
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />

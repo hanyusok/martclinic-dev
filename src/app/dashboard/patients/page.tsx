@@ -7,8 +7,7 @@ import Link from 'next/link'
 
 interface Patient {
   id: string
-  firstName: string
-  lastName: string
+  fullName: string
   dateOfBirth: string
   gender: string
   phoneNumber?: string
@@ -107,7 +106,7 @@ export default function PatientsPage() {
                         <div className="flex items-center">
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">
-                              {patient.firstName} {patient.lastName}
+                              {patient.fullName}
                             </div>
                             <div className="text-sm text-gray-500">
                               DOB: {new Date(patient.dateOfBirth).toLocaleDateString()}

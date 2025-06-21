@@ -6,8 +6,7 @@ import { useSession } from 'next-auth/react'
 
 interface Patient {
   id: string
-  firstName: string
-  lastName: string
+  fullName: string
   dateOfBirth: string
   gender: string
 }
@@ -149,7 +148,7 @@ export default function NewReportForm() {
                   <div>
                     <p className="text-sm text-gray-500">Name</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {patient.firstName} {patient.lastName}
+                      {patient.fullName}
                     </p>
                   </div>
                   <div>
@@ -204,7 +203,7 @@ export default function NewReportForm() {
                     </div>
                     <div>
                       <label className="block text-sm text-gray-500">성명</label>
-                      <input type="text" value={patient.firstName + ' ' + patient.lastName} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
+                      <input type="text" value={patient.fullName} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
                     </div>
                     <div>
                       <label className="block text-sm text-gray-500">생년월일/나이</label>

@@ -8,8 +8,7 @@ import Link from 'next/link'
 interface Report {
   id: string
   patient: {
-    firstName: string
-    lastName: string
+    fullName: string
   }
   examinationDate: string
   findings: string
@@ -79,7 +78,7 @@ export default function ReportsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-medium text-gray-900">
-                            {report.patient.firstName} {report.patient.lastName}
+                            {report.patient.fullName}
                           </div>
                           <div className="text-sm text-gray-500">
                             Examination Date: {new Date(report.examinationDate).toLocaleDateString()}

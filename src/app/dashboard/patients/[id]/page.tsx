@@ -7,8 +7,7 @@ import Link from 'next/link'
 
 interface Patient {
   id: string
-  firstName: string
-  lastName: string
+  fullName: string
   dateOfBirth: string
   gender: string
   phoneNumber?: string
@@ -87,7 +86,7 @@ export default function PatientDetailPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-gray-900">
-              {patient.firstName} {patient.lastName}
+              {patient.fullName}
             </h1>
             <div className="flex space-x-4">
               <Link
@@ -115,7 +114,7 @@ export default function PatientDetailPage() {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Full Name</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {patient.firstName} {patient.lastName}
+                    {patient.fullName}
                   </dd>
                 </div>
                 <div>

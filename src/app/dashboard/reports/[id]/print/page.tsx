@@ -7,8 +7,8 @@ import { useSession } from 'next-auth/react'
 interface Report {
   id: string
   patient: {
-    firstName: string
-    lastName: string
+    id: string
+    fullName: string
     dateOfBirth: string
     gender: string
     patientNumber?: string
@@ -125,7 +125,7 @@ export default function PrintReportPage() {
             </div>
             <div>
               <p className="text-sm text-gray-500">성명</p>
-              <p className="text-sm font-medium text-gray-900">{report.patient.firstName} {report.patient.lastName}</p>
+              <p className="text-sm font-medium text-gray-900">{report.patient.fullName}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">생년월일</p>

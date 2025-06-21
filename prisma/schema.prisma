@@ -26,8 +26,7 @@ model User {
 
 model Patient {
   id            String    @id @default(cuid())
-  firstName     String
-  lastName      String
+  fullName      String
   dateOfBirth   DateTime
   gender        Gender
   phoneNumber   String?
