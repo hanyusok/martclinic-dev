@@ -13,15 +13,32 @@ interface Report {
     lastName: string
     dateOfBirth: string
     gender: string
+    patientNumber?: string
   }
   doctor: {
     name: string
+    licenseNumber?: string
   }
   examinationDate: string
+  interpretationDate?: string
   findings: string
   impression: string
   recommendations: string
   images: string[]
+  conclusion?: string
+  additionalNotes?: string
+  signature?: string
+  signatureDate?: string
+  liverEcho?: string
+  liverMass?: string
+  gallbladderAbnormal?: string
+  bileDuctDilation?: string
+  spleenEnlargement?: string
+  pancreasAbnormal?: string
+  institutionName?: string
+  institutionAddress?: string
+  institutionPhone?: string
+  examinationType: string
 }
 
 export default function ReportDetailPage() {
@@ -117,7 +134,7 @@ export default function ReportDetailPage() {
         <div className="px-4 py-6 sm:px-0">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Ultrasound Report</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">상복부 초음파 검사 판독소견서</h1>
             <div className="flex space-x-4">
               <button
                 onClick={() => router.back()}
@@ -165,134 +182,169 @@ export default function ReportDetailPage() {
             </div>
           </div>
 
-          {/* Patient Information */}
+          {/* 의료기관 정보 */}
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
             <div className="px-4 py-5 sm:px-6">
-              <h2 className="text-lg font-medium text-gray-900">Patient Information</h2>
+              <h2 className="text-lg font-medium text-gray-900">의료기관 정보</h2>
             </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="text-sm font-medium text-gray-900">
-                    {report.patient.firstName} {report.patient.lastName}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Date of Birth</p>
-                  <p className="text-sm font-medium text-gray-900">
-                    {new Date(report.patient.dateOfBirth).toLocaleDateString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Gender</p>
-                  <p className="text-sm font-medium text-gray-900">{report.patient.gender}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Examining Doctor</p>
-                  <p className="text-sm font-medium text-gray-900">{report.doctor.name}</p>
-                </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">의료기관명칭</p>
+                <p className="text-sm font-medium text-gray-900">{report.institutionName || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">의료기관 주소</p>
+                <p className="text-sm font-medium text-gray-900">{report.institutionAddress || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">전화번호</p>
+                <p className="text-sm font-medium text-gray-900">{report.institutionPhone || '-'}</p>
               </div>
             </div>
           </div>
 
-          {/* Report Content */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          {/* 환자 정보 */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
             <div className="px-4 py-5 sm:px-6">
-              <h2 className="text-lg font-medium text-gray-900">Report Details</h2>
+              <h2 className="text-lg font-medium text-gray-900">환자 정보</h2>
             </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Examination Date</label>
-                  {isEditing ? (
-                    <input
-                      type="datetime-local"
-                      value={editedReport.examinationDate?.slice(0, 16)}
-                      onChange={(e) =>
-                        setEditedReport({ ...editedReport, examinationDate: e.target.value })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  ) : (
-                    <p className="mt-1 text-sm text-gray-900">
-                      {new Date(report.examinationDate).toLocaleString()}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Findings</label>
-                  {isEditing ? (
-                    <textarea
-                      value={editedReport.findings}
-                      onChange={(e) =>
-                        setEditedReport({ ...editedReport, findings: e.target.value })
-                      }
-                      rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  ) : (
-                    <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{report.findings}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Impression</label>
-                  {isEditing ? (
-                    <textarea
-                      value={editedReport.impression}
-                      onChange={(e) =>
-                        setEditedReport({ ...editedReport, impression: e.target.value })
-                      }
-                      rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  ) : (
-                    <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{report.impression}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Recommendations</label>
-                  {isEditing ? (
-                    <textarea
-                      value={editedReport.recommendations}
-                      onChange={(e) =>
-                        setEditedReport({ ...editedReport, recommendations: e.target.value })
-                      }
-                      rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  ) : (
-                    <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">
-                      {report.recommendations || 'N/A'}
-                    </p>
-                  )}
-                </div>
-
-                {/* Images */}
-                {report.images.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-4">
-                      Ultrasound Images
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {report.images.map((image, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={image}
-                            alt={`Ultrasound image ${index + 1}`}
-                            className="w-full h-auto rounded-lg shadow-lg"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">등록번호</p>
+                <p className="text-sm font-medium text-gray-900">{report.patient.patientNumber || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">성명</p>
+                <p className="text-sm font-medium text-gray-900">{report.patient.firstName} {report.patient.lastName}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">생년월일</p>
+                <p className="text-sm font-medium text-gray-900">{new Date(report.patient.dateOfBirth).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">성별</p>
+                <p className="text-sm font-medium text-gray-900">{report.patient.gender === 'MALE' ? '남' : report.patient.gender === 'FEMALE' ? '여' : '기타'}</p>
               </div>
             </div>
           </div>
+
+          {/* 검사 정보 */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-lg font-medium text-gray-900">검사 정보</h2>
+            </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">검사명</p>
+                <p className="text-sm font-medium text-gray-900">{report.examinationType === 'GENERAL' ? '일반' : report.examinationType === 'DETAILED' ? '정밀' : '제한적'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">검사일시</p>
+                <p className="text-sm font-medium text-gray-900">{new Date(report.examinationDate).toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">판독일시</p>
+                <p className="text-sm font-medium text-gray-900">{report.interpretationDate ? new Date(report.interpretationDate).toLocaleString() : '-'}</p>
+              </div>
+            </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">검사 및 판독 의사</p>
+                <p className="text-sm font-medium text-gray-900">{report.doctor.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">면허번호</p>
+                <p className="text-sm font-medium text-gray-900">{report.doctor.licenseNumber || '-'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 검사소견 */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-lg font-medium text-gray-900">검사소견</h2>
+            </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 space-y-4">
+              <div>
+                <p className="text-sm text-gray-500">간 실질의 에코</p>
+                <p className="text-sm font-medium text-gray-900">{report.liverEcho || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">간종괴 유무</p>
+                <p className="text-sm font-medium text-gray-900">{report.liverMass ? `있음 (${report.liverMass})` : '없음'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">담낭 이상 여부</p>
+                <p className="text-sm font-medium text-gray-900">{report.gallbladderAbnormal ? `있음 (${report.gallbladderAbnormal})` : '없음'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">담관 확장 여부</p>
+                <p className="text-sm font-medium text-gray-900">{report.bileDuctDilation ? `있음 (${report.bileDuctDilation})` : '없음'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">비장 종대 여부</p>
+                <p className="text-sm font-medium text-gray-900">{report.spleenEnlargement ? `있음 (${report.spleenEnlargement})` : '없음'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">췌장 이상 여부</p>
+                <p className="text-sm font-medium text-gray-900">{report.pancreasAbnormal ? `있음 (${report.pancreasAbnormal})` : '없음'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 결론 및 추가 소견 */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-lg font-medium text-gray-900">결론 및 추가 소견</h2>
+            </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 space-y-4">
+              <div>
+                <p className="text-sm text-gray-500">결론</p>
+                <p className="text-sm font-medium text-gray-900">{report.conclusion || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">추가 소견 또는 권고사항</p>
+                <p className="text-sm font-medium text-gray-900">{report.additionalNotes || report.recommendations || '-'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 서명 */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-lg font-medium text-gray-900">서명</h2>
+            </div>
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">판독 의사 서명</p>
+                <p className="text-sm font-medium text-gray-900">{report.signature || report.doctor.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">작성일</p>
+                <p className="text-sm font-medium text-gray-900">{report.signatureDate ? new Date(report.signatureDate).toLocaleDateString() : '-'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 이미지 */}
+          {report.images.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Ultrasound Images
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                {report.images.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt={`Ultrasound image ${index + 1}`}
+                      className="w-full h-auto rounded-lg shadow-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
