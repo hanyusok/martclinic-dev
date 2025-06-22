@@ -1,60 +1,17 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import DashboardNav from '@/components/DashboardNav'
 
 export default function DashboardPage() {
   const { data: session } = useSession()
   const router = useRouter()
 
-  const handleSignOut = async () => {
-    await signOut({ redirect: false })
-    router.push('/')
-  }
-
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-indigo-600">Ultrasound Report System</h1>
-              </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <Link
-                  href="/dashboard"
-                  className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/dashboard/patients"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Patients
-                </Link>
-                <Link
-                  href="/dashboard/reports"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Reports
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <span className="text-gray-700 mr-4">Welcome, {session?.user?.name}</span>
-              <button
-                onClick={handleSignOut}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
-              >
-                Sign out
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <DashboardNav />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -76,6 +33,45 @@ export default function DashboardPage() {
                   >
                     New Patient
                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Card */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Profile</h3>
+                <div className="mt-5">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Name</p>
+                      <p className="text-sm text-gray-900">{session?.user?.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Role</p>
+                      <p className="text-sm text-gray-900">{session?.user?.role}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Email</p>
+                      <p className="text-sm text-gray-900">{session?.user?.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">License Number</p>
+                      <p className="text-sm text-gray-900">{session?.user?.licenseNumber || 'Not set'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Institution</p>
+                      <p className="text-sm text-gray-900">{session?.user?.institutionName || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-5">
+                    <Link
+                      href="/dashboard/profile"
+                      className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 inline-block text-center"
+                    >
+                      Edit Profile
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

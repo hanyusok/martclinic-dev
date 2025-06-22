@@ -19,6 +19,12 @@ model User {
   password      String
   role          Role      @default(DOCTOR)
   licenseNumber String?   // 의사 면허번호
+  
+  // Medical Institution Information
+  institutionName String?   // 의료기관명칭
+  institutionAddress String? // 의료기관 주소
+  institutionPhone String?   // 전화번호
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reports       Report[]

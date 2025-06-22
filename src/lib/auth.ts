@@ -39,6 +39,10 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          licenseNumber: user.licenseNumber,
+          institutionName: user.institutionName,
+          institutionAddress: user.institutionAddress,
+          institutionPhone: user.institutionPhone,
         }
       }
     })
@@ -57,6 +61,10 @@ export const authOptions: NextAuthOptions = {
           ...token,
           id: user.id,
           role: user.role,
+          licenseNumber: user.licenseNumber,
+          institutionName: user.institutionName,
+          institutionAddress: user.institutionAddress,
+          institutionPhone: user.institutionPhone,
         }
       }
       return token
@@ -68,6 +76,10 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
           id: token.id,
           role: token.role,
+          licenseNumber: token.licenseNumber,
+          institutionName: token.institutionName,
+          institutionAddress: token.institutionAddress,
+          institutionPhone: token.institutionPhone,
         }
       }
     }

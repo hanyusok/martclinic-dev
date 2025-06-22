@@ -45,7 +45,23 @@ export default function NewReportForm() {
     if (patientId) {
       fetchPatient(patientId)
     }
+    // Fetch user's institution information
+    fetchUserProfile()
   }, [searchParams])
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/profile')
+      if (response.ok) {
+        const userData = await response.json()
+        setInstitutionName(userData.institutionName || '')
+        setInstitutionAddress(userData.institutionAddress || '')
+        setInstitutionPhone(userData.institutionPhone || '')
+      }
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error)
+    }
+  }
 
   const fetchPatient = async (patientId: string) => {
     try {
