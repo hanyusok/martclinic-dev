@@ -5,6 +5,10 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/DashboardNav'
+import { invalidateUserCache } from '@/lib/userCache'
+import { dateUtils } from '@/lib/date-utils'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import AlertMessage from '@/components/ui/AlertMessage'
 
 interface UserProfile {
   id: string
@@ -137,8 +141,18 @@ export default function ProfilePage() {
         user: {
           ...session?.user,
           name: updatedProfile.name,
+          email: updatedProfile.email,
+          licenseNumber: updatedProfile.licenseNumber,
+          institutionName: updatedProfile.institutionName,
+          institutionAddress: updatedProfile.institutionAddress,
+          institutionPhone: updatedProfile.institutionPhone,
         }
       })
+
+      // Show success message and redirect back to dashboard after a short delay
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 1500)
 
       // Clear password fields
       setFormData(prev => ({
@@ -147,6 +161,11 @@ export default function ProfilePage() {
         newPassword: '',
         confirmPassword: '',
       }))
+
+      // Invalidate user cache
+      if (session?.user?.id) {
+        invalidateUserCache(session.user.id)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update profile')
     } finally {
@@ -176,7 +195,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-500">Loading profile...</div>
+        <LoadingSpinner size="lg" />
       </div>
     )
   }
@@ -202,23 +221,11 @@ export default function ProfilePage() {
 
           {/* Success/Error Messages */}
           {success && (
-            <div className="mb-6 bg-green-50 border-l-4 border-green-400 p-4">
-              <div className="flex">
-                <div className="ml-3">
-                  <p className="text-sm text-green-700">{success}</p>
-                </div>
-              </div>
-            </div>
+            <AlertMessage type="success" message={success} className="mb-6" />
           )}
 
           {error && (
-            <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
-              <div className="flex">
-                <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              </div>
-            </div>
+            <AlertMessage type="error" message={error} className="mb-6" />
           )}
 
           {/* Profile Form */}
@@ -441,13 +448,13 @@ export default function ProfilePage() {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Member Since</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {new Date(profile.createdAt).toLocaleDateString()}
+                    {dateUtils.formatDisplayDate(profile.createdAt)}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Last Updated</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {new Date(profile.updatedAt).toLocaleDateString()}
+                    {dateUtils.formatDisplayDate(profile.updatedAt)}
                   </dd>
                 </div>
               </dl>

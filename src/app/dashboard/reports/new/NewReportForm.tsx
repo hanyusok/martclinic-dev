@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { fetchUserDataWithCache } from '@/lib/userCache'
+import { dateUtils } from '@/lib/date-utils'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import AlertMessage from '@/components/ui/AlertMessage'
 
 interface Patient {
   id: string
@@ -23,7 +27,14 @@ export default function NewReportForm() {
   const [institutionAddress, setInstitutionAddress] = useState('');
   const [institutionPhone, setInstitutionPhone] = useState('');
   const [examinationType, setExaminationType] = useState('GENERAL');
-  const [interpretationDate, setInterpretationDate] = useState('');
+  
+  // Fresh user data from database
+  const [userData, setUserData] = useState<any>(null);
+  
+  // Set current date and time as defaults using utilities
+  const [examinationDate, setExaminationDate] = useState(dateUtils.getCurrentDateTime());
+  const [interpretationDate, setInterpretationDate] = useState(dateUtils.getCurrentDateTime());
+  
   const [liverEcho, setLiverEcho] = useState('');
   const [liverMass, setLiverMass] = useState('');
   const [liverMassPresent, setLiverMassPresent] = useState('없음');
@@ -38,7 +49,9 @@ export default function NewReportForm() {
   const [conclusion, setConclusion] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [signature, setSignature] = useState('');
-  const [signatureDate, setSignatureDate] = useState('');
+  
+  // Set current date as default for signature date using utilities
+  const [signatureDate, setSignatureDate] = useState(dateUtils.getCurrentDate());
 
   useEffect(() => {
     const patientId = searchParams.get('patientId')
@@ -47,16 +60,25 @@ export default function NewReportForm() {
     }
     // Fetch user's institution information
     fetchUserProfile()
-  }, [searchParams])
+    
+    // Set signature to current user's name if available
+    if (userData?.name && !signature) {
+      setSignature(userData.name)
+    } else if (session?.user?.name && !signature) {
+      setSignature(session.user.name)
+    }
+  }, [searchParams, session, userData])
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('/api/profile')
-      if (response.ok) {
-        const userData = await response.json()
-        setInstitutionName(userData.institutionName || '')
-        setInstitutionAddress(userData.institutionAddress || '')
-        setInstitutionPhone(userData.institutionPhone || '')
+      if (session?.user?.id) {
+        const userData = await fetchUserDataWithCache(session.user.id)
+        if (userData) {
+          setInstitutionName(userData.institutionName || '')
+          setInstitutionAddress(userData.institutionAddress || '')
+          setInstitutionPhone(userData.institutionPhone || '')
+          setUserData(userData)
+        }
       }
     } catch (error) {
       console.error('Failed to fetch user profile:', error)
@@ -92,7 +114,7 @@ export default function NewReportForm() {
       institutionAddress,
       institutionPhone,
       examinationType,
-      examinationDate: formData.get('examinationDate'),
+      examinationDate,
       interpretationDate,
       liverEcho,
       liverMass: liverMassPresent === '있음' ? liverMass : '',
@@ -170,7 +192,7 @@ export default function NewReportForm() {
                   <div>
                     <p className="text-sm text-gray-500">Date of Birth</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {new Date(patient.dateOfBirth).toLocaleDateString()}
+                      {dateUtils.formatDisplayDate(patient.dateOfBirth)}
                     </p>
                   </div>
                   <div>
@@ -183,13 +205,7 @@ export default function NewReportForm() {
 
             <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
               {error && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4">
-                  <div className="flex">
-                    <div className="ml-3">
-                      <p className="text-sm text-red-700">{error}</p>
-                    </div>
-                  </div>
-                </div>
+                <AlertMessage type="error" message={error} />
               )}
 
               {/* 의료기관 정보 */}
@@ -223,7 +239,7 @@ export default function NewReportForm() {
                     </div>
                     <div>
                       <label className="block text-sm text-gray-500">생년월일/나이</label>
-                      <input type="text" value={new Date(patient.dateOfBirth).toLocaleDateString()} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
+                      <input type="text" value={dateUtils.formatDisplayDate(patient.dateOfBirth)} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
                     </div>
                     <div>
                       <label className="block text-sm text-gray-500">성별</label>
@@ -244,22 +260,39 @@ export default function NewReportForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">검사일시</label>
-                  <input type="datetime-local" name="examinationDate" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input 
+                    type="datetime-local" 
+                    name="examinationDate" 
+                    value={examinationDate}
+                    onChange={e => setExaminationDate(e.target.value)}
+                    required 
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" 
+                  />
+                  <p className="mt-1 text-xs text-gray-500">현재 날짜/시간으로 자동 설정됨</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">판독일시</label>
-                  <input type="datetime-local" value={interpretationDate} onChange={e => setInterpretationDate(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input 
+                    type="datetime-local" 
+                    value={interpretationDate} 
+                    onChange={e => setInterpretationDate(e.target.value)} 
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" 
+                  />
+                  <p className="mt-1 text-xs text-gray-500">현재 날짜/시간으로 자동 설정됨</p>
                 </div>
               </div>
               {/* 검사 및 판독 의사 정보 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">검사 및 판독 의사</label>
-                  <input type="text" value={session?.user?.name || ''} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
+                  <input type="text" value={userData?.name || session?.user?.name || ''} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">면허번호</label>
-                  <input type="text" value={session?.user?.licenseNumber || ''} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
+                  <input type="text" value={userData?.licenseNumber || session?.user?.licenseNumber || ''} readOnly className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" />
+                  {userData?.licenseNumber && (
+                    <p className="mt-1 text-xs text-green-600">📊 최신 프로필 데이터</p>
+                  )}
                 </div>
               </div>
               <hr className="my-4" />

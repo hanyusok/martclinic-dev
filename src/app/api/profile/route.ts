@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { PrismaClient } from '@prisma/client'
 import { hash, compare } from 'bcrypt'
 import { authOptions } from '@/lib/auth'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
 
 export async function GET(request: Request) {
   try {
@@ -36,7 +34,10 @@ export async function GET(request: Request) {
       return new NextResponse('User not found', { status: 404 })
     }
 
-    return NextResponse.json(user)
+    // Add cache headers for better performance
+    const response = NextResponse.json(user)
+    response.headers.set('Cache-Control', 'private, max-age=300') // Cache for 5 minutes
+    return response
   } catch (error) {
     console.error('Error fetching user profile:', error)
     return new NextResponse('Internal Server Error', { status: 500 })
