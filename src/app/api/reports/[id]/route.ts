@@ -16,6 +16,11 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can access reports
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can access reports', { status: 403 })
+    }
+
     const report = await prisma.report.findUnique({
       where: {
         id: params.id,
@@ -28,6 +33,11 @@ export async function GET(
 
     if (!report) {
       return new NextResponse('Report not found', { status: 404 })
+    }
+
+    // Check if the doctor owns this report
+    if (report.doctorId !== session.user.id) {
+      return new NextResponse('Forbidden: You do not have access to this report', { status: 403 })
     }
 
     return NextResponse.json(report)
@@ -46,6 +56,26 @@ export async function PUT(
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    // Only doctors can update reports
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can update reports', { status: 403 })
+    }
+
+    // First check if the report exists and belongs to the doctor
+    const existingReport = await prisma.report.findUnique({
+      where: {
+        id: params.id,
+      },
+    })
+
+    if (!existingReport) {
+      return new NextResponse('Report not found', { status: 404 })
+    }
+
+    if (existingReport.doctorId !== session.user.id) {
+      return new NextResponse('Forbidden: You do not have access to this report', { status: 403 })
     }
 
     const body = await request.json()
@@ -90,6 +120,26 @@ export async function DELETE(
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    // Only doctors can delete reports
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can delete reports', { status: 403 })
+    }
+
+    // First check if the report exists and belongs to the doctor
+    const existingReport = await prisma.report.findUnique({
+      where: {
+        id: params.id,
+      },
+    })
+
+    if (!existingReport) {
+      return new NextResponse('Report not found', { status: 404 })
+    }
+
+    if (existingReport.doctorId !== session.user.id) {
+      return new NextResponse('Forbidden: You do not have access to this report', { status: 403 })
     }
 
     await prisma.report.delete({

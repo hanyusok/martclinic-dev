@@ -15,6 +15,11 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can upload files
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can upload files', { status: 403 })
+    }
+
     const formData = await request.formData()
     const file = formData.get('file') as File
 

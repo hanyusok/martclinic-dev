@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
   title: 'Ultrasound Report System',
   description: 'A comprehensive ultrasound report system for outpatient clinics',
+  icons: {
+    icon: '/ultrasound-favicon.svg',
+  },
 }
 
 export default function RootLayout({

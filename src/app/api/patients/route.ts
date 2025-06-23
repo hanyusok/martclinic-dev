@@ -13,6 +13,11 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can create patients
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can create patients', { status: 403 })
+    }
+
     const body = await request.json()
     const {
       fullName,
@@ -38,6 +43,7 @@ export async function POST(request: Request) {
         email,
         address,
         medicalHistory,
+        createdBy: session.user.id,
       },
     })
 
@@ -56,18 +62,34 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can access patients
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can access patients', { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
 
+    // Return patients that the doctor has created OR patients the doctor has reports for
     const patients = await prisma.patient.findMany({
-      where: search
-        ? {
-            OR: [
-              { fullName: { contains: search, mode: 'insensitive' } },
-              { email: { contains: search, mode: 'insensitive' } },
-            ],
-          }
-        : undefined,
+      where: {
+        OR: [
+          { createdBy: session.user.id },
+          {
+            reports: {
+              some: {
+                doctorId: session.user.id,
+              },
+            },
+          },
+        ],
+        ...(search && {
+          OR: [
+            { fullName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        }),
+      },
       orderBy: {
         createdAt: 'desc',
       },

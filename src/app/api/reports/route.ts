@@ -13,6 +13,11 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can create reports
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can create reports', { status: 403 })
+    }
+
     const body = await request.json()
     const {
       patientId,
@@ -59,13 +64,20 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can access reports
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can access reports', { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
     const patientId = searchParams.get('patientId')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
+    // Only return reports created by the logged-in doctor
     const reports = await prisma.report.findMany({
       where: {
+        doctorId: session.user.id,
         ...(patientId && { patientId }),
         ...(startDate && endDate && {
           examinationDate: {

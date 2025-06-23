@@ -16,6 +16,32 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    // Only doctors can access patients
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can access patients', { status: 403 })
+    }
+
+    // Check if the doctor has access to this patient (created by doctor OR has reports for patient)
+    const patientAccess = await prisma.patient.findFirst({
+      where: {
+        id: params.id,
+        OR: [
+          { createdBy: session.user.id }, // Patient created by this doctor
+          {
+            reports: {
+              some: {
+                doctorId: session.user.id, // Doctor has reports for this patient
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    if (!patientAccess) {
+      return new NextResponse('Forbidden: You do not have access to this patient', { status: 403 })
+    }
+
     const patient = await prisma.patient.findUnique({
       where: {
         id: params.id,
@@ -42,6 +68,32 @@ export async function PUT(
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    // Only doctors can update patients
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can update patients', { status: 403 })
+    }
+
+    // Check if the doctor has access to this patient (created by doctor OR has reports for patient)
+    const patientAccess = await prisma.patient.findFirst({
+      where: {
+        id: params.id,
+        OR: [
+          { createdBy: session.user.id }, // Patient created by this doctor
+          {
+            reports: {
+              some: {
+                doctorId: session.user.id, // Doctor has reports for this patient
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    if (!patientAccess) {
+      return new NextResponse('Forbidden: You do not have access to this patient', { status: 403 })
     }
 
     const body = await request.json()
@@ -86,6 +138,32 @@ export async function DELETE(
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    // Only doctors can delete patients
+    if (session.user.role !== 'DOCTOR') {
+      return new NextResponse('Forbidden: Only doctors can delete patients', { status: 403 })
+    }
+
+    // Check if the doctor has access to this patient (created by doctor OR has reports for patient)
+    const patientAccess = await prisma.patient.findFirst({
+      where: {
+        id: params.id,
+        OR: [
+          { createdBy: session.user.id }, // Patient created by this doctor
+          {
+            reports: {
+              some: {
+                doctorId: session.user.id, // Doctor has reports for this patient
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    if (!patientAccess) {
+      return new NextResponse('Forbidden: You do not have access to this patient', { status: 403 })
     }
 
     await prisma.patient.delete({

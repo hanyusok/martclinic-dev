@@ -28,6 +28,7 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reports       Report[]
+  createdPatients Patient[] @relation("PatientCreator")
 }
 
 model Patient {
@@ -40,6 +41,8 @@ model Patient {
   address       String?
   medicalHistory String?
   patientNumber String?   // 환자 등록번호
+  createdBy     String?   // ID of the doctor who created this patient
+  createdByDoctor User?   @relation("PatientCreator", fields: [createdBy], references: [id])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reports       Report[]
