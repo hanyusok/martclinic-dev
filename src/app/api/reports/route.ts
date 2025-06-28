@@ -21,15 +21,42 @@ export async function POST(request: Request) {
     const body = await request.json()
     const {
       patientId,
+      reportType = 'ABDOMINAL',
+      institutionName,
+      institutionAddress,
+      institutionPhone,
+      examinationType,
+      examinationDate,
+      interpretationDate,
+      // Abdominal ultrasound fields
+      liverEcho,
+      liverMass,
+      gallbladderAbnormal,
+      bileDuctDilation,
+      spleenEnlargement,
+      pancreasAbnormal,
+      // Carotid ultrasound fields
+      rightCarotidImt,
+      leftCarotidImt,
+      rightCarotidStenosis,
+      leftCarotidStenosis,
+      rightCarotidPlaque,
+      leftCarotidPlaque,
+      rightCarotidFlow,
+      leftCarotidFlow,
+      // Legacy fields
       findings,
       impression,
       recommendations,
-      examinationDate,
+      conclusion,
+      additionalNotes,
+      signature,
+      signatureDate,
       images,
     } = body
 
     // Validate required fields
-    if (!patientId || !findings || !impression || !examinationDate) {
+    if (!patientId || !examinationDate) {
       return new NextResponse('Missing required fields', { status: 400 })
     }
 
@@ -37,10 +64,37 @@ export async function POST(request: Request) {
       data: {
         patientId,
         doctorId: session.user.id,
+        reportType,
+        institutionName,
+        institutionAddress,
+        institutionPhone,
+        examinationType,
+        examinationDate: new Date(examinationDate),
+        interpretationDate: interpretationDate ? new Date(interpretationDate) : null,
+        // Abdominal ultrasound fields
+        liverEcho,
+        liverMass,
+        gallbladderAbnormal,
+        bileDuctDilation,
+        spleenEnlargement,
+        pancreasAbnormal,
+        // Carotid ultrasound fields
+        rightCarotidImt,
+        leftCarotidImt,
+        rightCarotidStenosis,
+        leftCarotidStenosis,
+        rightCarotidPlaque,
+        leftCarotidPlaque,
+        rightCarotidFlow,
+        leftCarotidFlow,
+        // Legacy fields
         findings,
         impression,
         recommendations,
-        examinationDate: new Date(examinationDate),
+        conclusion,
+        additionalNotes,
+        signature,
+        signatureDate: signatureDate ? new Date(signatureDate) : null,
         images,
       },
       include: {
@@ -73,12 +127,14 @@ export async function GET(request: Request) {
     const patientId = searchParams.get('patientId')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
+    const reportType = searchParams.get('reportType')
 
     // Only return reports created by the logged-in doctor
     const reports = await prisma.report.findMany({
       where: {
         doctorId: session.user.id,
         ...(patientId && { patientId }),
+        ...(reportType && { reportType }),
         ...(startDate && endDate && {
           examinationDate: {
             gte: new Date(startDate),

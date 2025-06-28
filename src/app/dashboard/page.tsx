@@ -36,6 +36,11 @@ interface Stats {
     count: number
     label: string
   }>
+  reportTypeStats: Array<{
+    type: string
+    count: number
+    label: string
+  }>
   monthlyTrend: Array<{
     month: string
     count: number
@@ -365,6 +370,29 @@ export default function DashboardPage() {
                                   className="bg-indigo-600 h-2 rounded-full" 
                                   style={{ 
                                     width: `${(typeStat.count / Math.max(...stats.examinationTypeStats.map(s => s.count), 1)) * 100}%` 
+                                  }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">{typeStat.count}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Report Type Breakdown */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">Report Types (This Month)</h4>
+                      <div className="space-y-2">
+                        {stats.reportTypeStats.map((typeStat) => (
+                          <div key={typeStat.type} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">{typeStat.label}</span>
+                            <div className="flex items-center">
+                              <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                <div 
+                                  className="bg-green-600 h-2 rounded-full" 
+                                  style={{ 
+                                    width: `${(typeStat.count / Math.max(...stats.reportTypeStats.map(s => s.count), 1)) * 100}%` 
                                   }}
                                 ></div>
                               </div>

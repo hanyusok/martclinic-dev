@@ -88,6 +88,20 @@ export async function GET() {
       },
     })
 
+    // Report type breakdown
+    const reportTypeStats = await prisma.report.groupBy({
+      by: ['reportType'],
+      where: {
+        doctorId: session.user.id,
+        examinationDate: {
+          gte: startOfMonth,
+        },
+      },
+      _count: {
+        reportType: true,
+      },
+    })
+
     // Monthly trend for the last 6 months
     const monthlyTrend = []
     for (let i = 5; i >= 0; i--) {
@@ -148,6 +162,11 @@ export async function GET() {
         count: stat._count.examinationType,
         label: getExaminationTypeLabel(stat.examinationType),
       })),
+      reportTypeStats: reportTypeStats.map(stat => ({
+        type: stat.reportType,
+        count: stat._count.reportType,
+        label: getReportTypeLabel(stat.reportType),
+      })),
       monthlyTrend,
       genderStats: genderStats.map(stat => ({
         gender: stat.gender,
@@ -172,6 +191,17 @@ function getExaminationTypeLabel(type: string): string {
       return '정밀'
     case 'LIMITED':
       return '제한적'
+    default:
+      return type
+  }
+}
+
+function getReportTypeLabel(type: string): string {
+  switch (type) {
+    case 'ABDOMINAL':
+      return '상복부'
+    case 'CAROTID':
+      return '경동맥'
     default:
       return type
   }

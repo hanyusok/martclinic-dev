@@ -11,6 +11,7 @@ interface Report {
   patient: {
     fullName: string
   }
+  reportType: string
   examinationDate: string
   findings: string
   impression: string
@@ -43,6 +44,10 @@ export default function ReportsPage() {
     window.open(`/dashboard/reports/${reportId}/print`, '_blank')
   }
 
+  const getReportTypeLabel = (reportType: string) => {
+    return reportType === 'ABDOMINAL' ? '상복부' : '경동맥'
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <DashboardNav />
@@ -71,20 +76,28 @@ export default function ReportsPage() {
                   <li key={report.id}>
                     <div className="px-6 py-4 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="ml-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3">
                             <div className="text-sm font-medium text-gray-900">
                               {report.patient.fullName}
                             </div>
-                            <div className="text-sm text-gray-500">
-                              Date: {new Date(report.examinationDate).toLocaleDateString()}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              Doctor: {report.doctor.name}
-                            </div>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {getReportTypeLabel(report.reportType)}
+                            </span>
                           </div>
+                          <div className="mt-1 text-sm text-gray-500">
+                            Examination Date: {new Date(report.examinationDate).toLocaleDateString()}
+                          </div>
+                          <div className="mt-1 text-sm text-gray-500">
+                            Doctor: {report.doctor.name}
+                          </div>
+                          {report.impression && (
+                            <div className="mt-2 text-sm text-gray-500">
+                              Impression: {report.impression}
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="ml-4 flex-shrink-0 flex space-x-4">
                           <Link
                             href={`/dashboard/reports/${report.id}`}
                             className="text-indigo-600 hover:text-indigo-900"
@@ -93,7 +106,7 @@ export default function ReportsPage() {
                           </Link>
                           <button
                             onClick={() => handlePrint(report.id)}
-                            className="text-indigo-600 hover:text-indigo-900"
+                            className="text-green-600 hover:text-green-900"
                           >
                             Print
                           </button>

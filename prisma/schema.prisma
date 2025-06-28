@@ -55,6 +55,9 @@ model Report {
   doctorId      String
   doctor        User      @relation(fields: [doctorId], references: [id])
   
+  // Report Type
+  reportType    ReportType @default(ABDOMINAL) // 복부/경동맥 초음파 구분
+  
   // Medical Institution Information
   institutionName String?   // 의료기관명칭
   institutionAddress String? // 의료기관 주소
@@ -65,13 +68,23 @@ model Report {
   examinationDate DateTime
   interpretationDate DateTime? // 판독일시
   
-  // Organ Findings
+  // Abdominal Ultrasound Findings
   liverEcho String?        // 간실질의 에코
   liverMass String?        // 간종괴 유무 및 세부내용
   gallbladderAbnormal String? // 담낭 이상 여부 및 세부내용
   bileDuctDilation String? // 담관 확장 여부 및 세부내용
   spleenEnlargement String? // 비장 종대 여부 및 세부내용
   pancreasAbnormal String? // 췌장 이상 여부 및 세부내용
+  
+  // Carotid Ultrasound Findings
+  rightCarotidImt String?      // 우측 경동맥 IMT
+  leftCarotidImt String?       // 좌측 경동맥 IMT
+  rightCarotidStenosis String? // 우측 경동맥 협착
+  leftCarotidStenosis String?  // 좌측 경동맥 협착
+  rightCarotidPlaque String?   // 우측 경동맥 플라크
+  leftCarotidPlaque String?    // 좌측 경동맥 플라크
+  rightCarotidFlow String?     // 우측 경동맥 혈류
+  leftCarotidFlow String?      // 좌측 경동맥 혈류
   
   // Legacy fields (keeping for backward compatibility)
   findings      String?
@@ -99,4 +112,9 @@ enum ExaminationType {
   GENERAL    // 일반
   DETAILED   // 정밀
   LIMITED    // 제한적
+}
+
+enum ReportType {
+  ABDOMINAL  // 복부 초음파
+  CAROTID    // 경동맥 초음파
 } 

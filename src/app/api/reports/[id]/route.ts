@@ -80,10 +80,37 @@ export async function PUT(
 
     const body = await request.json()
     const {
+      reportType,
+      institutionName,
+      institutionAddress,
+      institutionPhone,
+      examinationType,
+      examinationDate,
+      interpretationDate,
+      // Abdominal ultrasound fields
+      liverEcho,
+      liverMass,
+      gallbladderAbnormal,
+      bileDuctDilation,
+      spleenEnlargement,
+      pancreasAbnormal,
+      // Carotid ultrasound fields
+      rightCarotidImt,
+      leftCarotidImt,
+      rightCarotidStenosis,
+      leftCarotidStenosis,
+      rightCarotidPlaque,
+      leftCarotidPlaque,
+      rightCarotidFlow,
+      leftCarotidFlow,
+      // Legacy fields
       findings,
       impression,
       recommendations,
-      examinationDate,
+      conclusion,
+      additionalNotes,
+      signature,
+      signatureDate,
       images,
     } = body
 
@@ -92,10 +119,37 @@ export async function PUT(
         id: params.id,
       },
       data: {
+        reportType,
+        institutionName,
+        institutionAddress,
+        institutionPhone,
+        examinationType,
+        examinationDate: examinationDate ? new Date(examinationDate) : existingReport.examinationDate,
+        interpretationDate: interpretationDate ? new Date(interpretationDate) : null,
+        // Abdominal ultrasound fields
+        liverEcho,
+        liverMass,
+        gallbladderAbnormal,
+        bileDuctDilation,
+        spleenEnlargement,
+        pancreasAbnormal,
+        // Carotid ultrasound fields
+        rightCarotidImt,
+        leftCarotidImt,
+        rightCarotidStenosis,
+        leftCarotidStenosis,
+        rightCarotidPlaque,
+        leftCarotidPlaque,
+        rightCarotidFlow,
+        leftCarotidFlow,
+        // Legacy fields
         findings,
         impression,
         recommendations,
-        examinationDate: new Date(examinationDate),
+        conclusion,
+        additionalNotes,
+        signature,
+        signatureDate: signatureDate ? new Date(signatureDate) : null,
         images,
       },
       include: {

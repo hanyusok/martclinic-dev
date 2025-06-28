@@ -23,6 +23,7 @@ export default function NewReportForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [patient, setPatient] = useState<Patient | null>(null)
   const [selectedImages, setSelectedImages] = useState<File[]>([])
+  const [reportType, setReportType] = useState('ABDOMINAL');
   const [institutionName, setInstitutionName] = useState('');
   const [institutionAddress, setInstitutionAddress] = useState('');
   const [institutionPhone, setInstitutionPhone] = useState('');
@@ -35,6 +36,7 @@ export default function NewReportForm() {
   const [examinationDate, setExaminationDate] = useState(dateUtils.getCurrentDateTime());
   const [interpretationDate, setInterpretationDate] = useState(dateUtils.getCurrentDateTime());
   
+  // Abdominal ultrasound fields
   const [liverEcho, setLiverEcho] = useState('');
   const [liverMass, setLiverMass] = useState('');
   const [liverMassPresent, setLiverMassPresent] = useState('없음');
@@ -46,6 +48,17 @@ export default function NewReportForm() {
   const [spleenEnlargementPresent, setSpleenEnlargementPresent] = useState('없음');
   const [pancreasAbnormal, setPancreasAbnormal] = useState('');
   const [pancreasAbnormalPresent, setPancreasAbnormalPresent] = useState('없음');
+  
+  // Carotid ultrasound fields
+  const [rightCarotidImt, setRightCarotidImt] = useState('');
+  const [leftCarotidImt, setLeftCarotidImt] = useState('');
+  const [rightCarotidStenosis, setRightCarotidStenosis] = useState('');
+  const [leftCarotidStenosis, setLeftCarotidStenosis] = useState('');
+  const [rightCarotidPlaque, setRightCarotidPlaque] = useState('');
+  const [leftCarotidPlaque, setLeftCarotidPlaque] = useState('');
+  const [rightCarotidFlow, setRightCarotidFlow] = useState('');
+  const [leftCarotidFlow, setLeftCarotidFlow] = useState('');
+  
   const [conclusion, setConclusion] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [signature, setSignature] = useState('');
@@ -110,18 +123,30 @@ export default function NewReportForm() {
     const formData = new FormData(e.currentTarget)
     const reportData = {
       patientId: patient?.id,
+      reportType,
       institutionName,
       institutionAddress,
       institutionPhone,
       examinationType,
       examinationDate,
       interpretationDate,
+      // Abdominal ultrasound fields
       liverEcho,
       liverMass: liverMassPresent === '있음' ? liverMass : '',
       gallbladderAbnormal: gallbladderAbnormalPresent === '있음' ? gallbladderAbnormal : '',
       bileDuctDilation: bileDuctDilationPresent === '있음' ? bileDuctDilation : '',
       spleenEnlargement: spleenEnlargementPresent === '있음' ? spleenEnlargement : '',
       pancreasAbnormal: pancreasAbnormalPresent === '있음' ? pancreasAbnormal : '',
+      // Carotid ultrasound fields
+      rightCarotidImt,
+      leftCarotidImt,
+      rightCarotidStenosis,
+      leftCarotidStenosis,
+      rightCarotidPlaque,
+      leftCarotidPlaque,
+      rightCarotidFlow,
+      leftCarotidFlow,
+      // Legacy fields
       findings: '', // legacy
       impression: '', // legacy
       recommendations: '', // legacy
@@ -172,12 +197,16 @@ export default function NewReportForm() {
     }
   }
 
+  const getReportTitle = () => {
+    return reportType === 'ABDOMINAL' ? '상복부 초음파 검사 판독소견서' : '경동맥 초음파 검사 판독소견서'
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-6">상복부 초음파 검사 판독소견서</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-6">{getReportTitle()}</h1>
 
             {patient && (
               <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6 mb-6">
@@ -207,6 +236,15 @@ export default function NewReportForm() {
               {error && (
                 <AlertMessage type="error" message={error} />
               )}
+
+              {/* Report Type Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">검사 유형</label>
+                <select value={reportType} onChange={e => setReportType(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                  <option value="ABDOMINAL">상복부 초음파</option>
+                  <option value="CAROTID">경동맥 초음파</option>
+                </select>
+              </div>
 
               {/* 의료기관 정보 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -296,88 +334,140 @@ export default function NewReportForm() {
                 </div>
               </div>
               <hr className="my-4" />
-              {/* 검사소견 */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">간 실질의 에코</label>
-                  <input type="text" value={liverEcho} onChange={e => setLiverEcho(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+              
+              {/* Abdominal Ultrasound Findings */}
+              {reportType === 'ABDOMINAL' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">검사소견 (상복부)</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">간종괴 유무</label>
-                    <select value={liverMassPresent} onChange={e => setLiverMassPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                      <option value="없음">없음</option>
-                      <option value="있음">있음</option>
-                    </select>
+                    <label className="block text-sm font-medium text-gray-700">간 실질의 에코</label>
+                    <input type="text" value={liverEcho} onChange={e => setLiverEcho(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                   </div>
-                  {liverMassPresent === '있음' && (
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">세부내용</label>
-                      <input type="text" value={liverMass} onChange={e => setLiverMass(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      <label className="block text-sm font-medium text-gray-700">간종괴 유무</label>
+                      <select value={liverMassPresent} onChange={e => setLiverMassPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="없음">없음</option>
+                        <option value="있음">있음</option>
+                      </select>
                     </div>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">담낭 이상 여부</label>
-                    <select value={gallbladderAbnormalPresent} onChange={e => setGallbladderAbnormalPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                      <option value="없음">없음</option>
-                      <option value="있음">있음</option>
-                    </select>
+                    {liverMassPresent === '있음' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">세부내용</label>
+                        <input type="text" value={liverMass} onChange={e => setLiverMass(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                    )}
                   </div>
-                  {gallbladderAbnormalPresent === '있음' && (
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">세부내용</label>
-                      <input type="text" value={gallbladderAbnormal} onChange={e => setGallbladderAbnormal(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      <label className="block text-sm font-medium text-gray-700">담낭 이상 여부</label>
+                      <select value={gallbladderAbnormalPresent} onChange={e => setGallbladderAbnormalPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="없음">없음</option>
+                        <option value="있음">있음</option>
+                      </select>
                     </div>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">담관 확장 여부</label>
-                    <select value={bileDuctDilationPresent} onChange={e => setBileDuctDilationPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                      <option value="없음">없음</option>
-                      <option value="있음">있음</option>
-                    </select>
+                    {gallbladderAbnormalPresent === '있음' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">세부내용</label>
+                        <input type="text" value={gallbladderAbnormal} onChange={e => setGallbladderAbnormal(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                    )}
                   </div>
-                  {bileDuctDilationPresent === '있음' && (
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">세부내용</label>
-                      <input type="text" value={bileDuctDilation} onChange={e => setBileDuctDilation(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      <label className="block text-sm font-medium text-gray-700">담관 확장 여부</label>
+                      <select value={bileDuctDilationPresent} onChange={e => setBileDuctDilationPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="없음">없음</option>
+                        <option value="있음">있음</option>
+                      </select>
                     </div>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">비장 종대 여부</label>
-                    <select value={spleenEnlargementPresent} onChange={e => setSpleenEnlargementPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                      <option value="없음">없음</option>
-                      <option value="있음">있음</option>
-                    </select>
+                    {bileDuctDilationPresent === '있음' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">세부내용</label>
+                        <input type="text" value={bileDuctDilation} onChange={e => setBileDuctDilation(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                    )}
                   </div>
-                  {spleenEnlargementPresent === '있음' && (
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">세부내용</label>
-                      <input type="text" value={spleenEnlargement} onChange={e => setSpleenEnlargement(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      <label className="block text-sm font-medium text-gray-700">비장 종대 여부</label>
+                      <select value={spleenEnlargementPresent} onChange={e => setSpleenEnlargementPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="없음">없음</option>
+                        <option value="있음">있음</option>
+                      </select>
                     </div>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">췌장 이상 여부</label>
-                    <select value={pancreasAbnormalPresent} onChange={e => setPancreasAbnormalPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                      <option value="없음">없음</option>
-                      <option value="있음">있음</option>
-                    </select>
+                    {spleenEnlargementPresent === '있음' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">세부내용</label>
+                        <input type="text" value={spleenEnlargement} onChange={e => setSpleenEnlargement(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                    )}
                   </div>
-                  {pancreasAbnormalPresent === '있음' && (
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">세부내용</label>
-                      <input type="text" value={pancreasAbnormal} onChange={e => setPancreasAbnormal(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      <label className="block text-sm font-medium text-gray-700">췌장 이상 여부</label>
+                      <select value={pancreasAbnormalPresent} onChange={e => setPancreasAbnormalPresent(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="없음">없음</option>
+                        <option value="있음">있음</option>
+                      </select>
                     </div>
-                  )}
+                    {pancreasAbnormalPresent === '있음' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">세부내용</label>
+                        <input type="text" value={pancreasAbnormal} onChange={e => setPancreasAbnormal(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Carotid Ultrasound Findings */}
+              {reportType === 'CAROTID' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">검사소견 (경동맥)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">우측 경동맥 IMT</label>
+                      <input type="text" value={rightCarotidImt} onChange={e => setRightCarotidImt(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">좌측 경동맥 IMT</label>
+                      <input type="text" value={leftCarotidImt} onChange={e => setLeftCarotidImt(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">우측 경동맥 협착</label>
+                      <input type="text" value={rightCarotidStenosis} onChange={e => setRightCarotidStenosis(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">좌측 경동맥 협착</label>
+                      <input type="text" value={leftCarotidStenosis} onChange={e => setLeftCarotidStenosis(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">우측 경동맥 플라크</label>
+                      <input type="text" value={rightCarotidPlaque} onChange={e => setRightCarotidPlaque(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">좌측 경동맥 플라크</label>
+                      <input type="text" value={leftCarotidPlaque} onChange={e => setLeftCarotidPlaque(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">우측 경동맥 혈류</label>
+                      <input type="text" value={rightCarotidFlow} onChange={e => setRightCarotidFlow(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">좌측 경동맥 혈류</label>
+                      <input type="text" value={leftCarotidFlow} onChange={e => setLeftCarotidFlow(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <hr className="my-4" />
               {/* 결론 및 추가 소견 */}
               <div>
@@ -452,20 +542,20 @@ export default function NewReportForm() {
                   </div>
                 )}
               </div>
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  onClick={() => router.back()}
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={() => router.push('/dashboard/reports')}
+                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400"
                 >
-                  취소
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-indigo-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
                 >
-                  {isSubmitting ? '생성 중...' : '보고서 생성'}
+                  {isSubmitting ? <LoadingSpinner size="sm" /> : 'Create Report'}
                 </button>
               </div>
             </form>
