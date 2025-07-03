@@ -39,10 +39,10 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
-          licenseNumber: user.licenseNumber,
-          institutionName: user.institutionName,
-          institutionAddress: user.institutionAddress,
-          institutionPhone: user.institutionPhone,
+          licenseNumber: user.licenseNumber || undefined,
+          institutionName: user.institutionName || undefined,
+          institutionAddress: user.institutionAddress || undefined,
+          institutionPhone: user.institutionPhone || undefined,
         }
       }
     })

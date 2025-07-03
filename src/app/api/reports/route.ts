@@ -48,10 +48,6 @@ export async function POST(request: Request) {
       findings,
       impression,
       recommendations,
-      conclusion,
-      additionalNotes,
-      signature,
-      signatureDate,
       images,
     } = body
 
@@ -91,10 +87,6 @@ export async function POST(request: Request) {
         findings,
         impression,
         recommendations,
-        conclusion,
-        additionalNotes,
-        signature,
-        signatureDate: signatureDate ? new Date(signatureDate) : null,
         images,
       },
       include: {
@@ -134,7 +126,7 @@ export async function GET(request: Request) {
       where: {
         doctorId: session.user.id,
         ...(patientId && { patientId }),
-        ...(reportType && { reportType }),
+        ...(reportType && { reportType: reportType as 'ABDOMINAL' | 'CAROTID' }),
         ...(startDate && endDate && {
           examinationDate: {
             gte: new Date(startDate),

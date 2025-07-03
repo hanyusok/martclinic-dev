@@ -107,10 +107,6 @@ export async function PUT(
       findings,
       impression,
       recommendations,
-      conclusion,
-      additionalNotes,
-      signature,
-      signatureDate,
       images,
     } = body
 
@@ -146,10 +142,6 @@ export async function PUT(
         findings,
         impression,
         recommendations,
-        conclusion,
-        additionalNotes,
-        signature,
-        signatureDate: signatureDate ? new Date(signatureDate) : null,
         images,
       },
       include: {
