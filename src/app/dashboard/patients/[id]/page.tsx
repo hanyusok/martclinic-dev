@@ -15,6 +15,7 @@ interface Patient {
   address?: string
   medicalHistory?: string
   createdAt: string
+  recordNumber?: string
 }
 
 interface Report {
@@ -90,10 +91,22 @@ export default function PatientDetailPage() {
             </h1>
             <div className="flex space-x-4">
               <Link
+                href="/dashboard/patients"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              >
+                List
+              </Link>
+              <Link
                 href={`/dashboard/reports/new?patientId=${patient.id}`}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
               >
                 New Report
+              </Link>
+              <Link
+                href={`/dashboard/patients/${patient.id}/edit`}
+                className="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-yellow-600"
+              >
+                Edit
               </Link>
               <button
                 onClick={() => router.back()}
@@ -138,6 +151,10 @@ export default function PatientDetailPage() {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Address</dt>
                   <dd className="mt-1 text-sm text-gray-900">{patient.address || 'N/A'}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">환자번호</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{patient.recordNumber || 'N/A'}</dd>
                 </div>
                 <div className="sm:col-span-2">
                   <dt className="text-sm font-medium text-gray-500">Medical History</dt>

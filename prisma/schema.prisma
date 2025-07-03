@@ -40,7 +40,7 @@ model Patient {
   email         String?
   address       String?
   medicalHistory String?
-  patientNumber String?   // 환자 등록번호
+  recordNumber String?   @unique // 환자번호
   createdBy     String?   // ID of the doctor who created this patient
   createdByDoctor User?   @relation("PatientCreator", fields: [createdBy], references: [id])
   createdAt     DateTime  @default(now())

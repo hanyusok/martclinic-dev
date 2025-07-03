@@ -11,7 +11,7 @@ interface Report {
     fullName: string
     dateOfBirth: string
     gender: string
-    patientNumber?: string
+    recordNumber?: string
   }
   doctor: {
     name: string
@@ -137,7 +137,7 @@ export default function PrintReportPage() {
             <div className="space-y-1 print:space-y-0.5">
               <div className="flex">
                 <span className="text-xs text-gray-500 w-16 print:w-12">등록번호:</span>
-                <span className="text-xs font-medium text-gray-900">{report.patient.patientNumber || report.patient.id}</span>
+                <span className="text-xs font-medium text-gray-900">{report.patient.recordNumber || report.patient.id}</span>
               </div>
               <div className="flex">
                 <span className="text-xs text-gray-500 w-16 print:w-12">성명:</span>

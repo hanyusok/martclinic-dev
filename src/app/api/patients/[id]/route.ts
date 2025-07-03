@@ -105,6 +105,7 @@ export async function PUT(
       email,
       address,
       medicalHistory,
+      recordNumber,
     } = body
 
     const patient = await prisma.patient.update({
@@ -119,6 +120,7 @@ export async function PUT(
         email,
         address,
         medicalHistory,
+        recordNumber,
       },
     })
 

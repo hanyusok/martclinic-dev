@@ -24,6 +24,7 @@ export default function NewPatientPage() {
       email: formData.get('email'),
       address: formData.get('address'),
       medicalHistory: formData.get('medicalHistory'),
+      recordNumber: formData.get('recordNumber'),
     }
 
     try {
@@ -129,6 +130,18 @@ export default function NewPatientPage() {
                     type="email"
                     name="email"
                     id="email"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="recordNumber" className="block text-sm font-medium text-gray-700">
+                    환자번호
+                  </label>
+                  <input
+                    type="text"
+                    name="recordNumber"
+                    id="recordNumber"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>

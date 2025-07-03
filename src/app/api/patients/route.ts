@@ -27,6 +27,7 @@ export async function POST(request: Request) {
       email,
       address,
       medicalHistory,
+      recordNumber,
     } = body
 
     // Validate required fields
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
         email,
         address,
         medicalHistory,
+        recordNumber,
         createdBy: session.user.id,
       },
     })

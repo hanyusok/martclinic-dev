@@ -12,6 +12,7 @@ interface Patient {
   dateOfBirth: string
   gender: string
   phoneNumber?: string
+  recordNumber?: string
 }
 
 export default function PatientsPage() {
@@ -105,6 +106,9 @@ export default function PatientsPage() {
                             </div>
                             <div className="text-sm text-gray-500">
                               DOB: {new Date(patient.dateOfBirth).toLocaleDateString()}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              환자번호: {patient.recordNumber || 'N/A'}
                             </div>
                           </div>
                         </div>
